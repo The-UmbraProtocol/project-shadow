@@ -57,10 +57,12 @@
       text-align: center;
       font-size: 1.2rem;
       line-height: 1.6;
+      min-height: 240px; /* Platz für den Text, damit nix hüpft */
     }
 
     main p {
       margin-bottom: 1.5em;
+      white-space: pre-wrap;
     }
 
     main p.encrypted {
@@ -71,11 +73,22 @@
 
     .input-container {
       margin-top: 2em;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .input-container.visible {
+      opacity: 1;
+    }
+
+    .input-container.visible input {
+      animation: blinkFocus 2s ease-in-out infinite;
+      outline-offset: 0;
+      outline-radius: 4px;
     }
 
     input[type="text"] {
       background: #111;
-      border: 1px solid #b30000;
       color: #eee;
       font-family: 'Share Tech Mono', monospace;
       font-size: 1rem;
@@ -85,6 +98,9 @@
       border-radius: 4px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      outline: none;
+      caret-color: #b30000;
+      box-sizing: border-box;
     }
 
     input[type="text"]::placeholder {
@@ -97,6 +113,15 @@
       color: #b30000;
       min-height: 1.5em;
     }
+
+    @keyframes blinkFocus {
+      0%, 100% {
+        outline: 2px solid #b30000;
+      }
+      50% {
+        outline: 2px solid #ff3c3c;
+      }
+    }
   </style>
 </head>
 <body>
@@ -106,22 +131,14 @@
   </header>
 
   <main>
-    <p>
-      We operate in the shadows, collecting the forgotten voices<br />
-      and guarding secrets that must never be heard.
-    </p>
-    <p>
-      Observation confirmed. Silence must be maintained.
-    </p>
-    <p class="encrypted">
-      &lt;X4R7P9Q2&gt;
-    </p>
+    <p id="typewriter"></p>
+    <p class="encrypted">&lt;X4R7P9Q2&gt;</p>
     <p>
       Unauthorized access will be met with immediate action.<br />
       Proceed only if you understand the consequences.
     </p>
 
-    <div class="input-container">
+    <div class="input-container" id="inputContainer">
       <input
         type="text"
         id="protocolKey"
@@ -139,6 +156,26 @@
   </footer>
 
   <script>
+    const textToType = `We operate in the shadows, collecting the forgotten voices\nand guarding secrets that must never be heard.\nObservation confirmed. Silence must be maintained.`;
+    const typewriterElem = document.getElementById('typewriter');
+    const inputContainer = document.getElementById('inputContainer');
+
+    let i = 0;
+    function typeWriter() {
+      if (i < textToType.length) {
+        typewriterElem.textContent += textToType.charAt(i);
+        i++;
+        setTimeout(typeWriter, 50);
+      } else {
+        // Text fertig getippt — Eingabefeld sichtbar machen & blinken lassen
+        inputContainer.classList.add('visible');
+        document.getElementById('protocolKey').focus();
+      }
+    }
+
+    typeWriter();
+
+    // Eingabeprüfung
     const input = document.getElementById('protocolKey');
     const message = document.getElementById('message');
     const correctKey = 'SHADOW42';
