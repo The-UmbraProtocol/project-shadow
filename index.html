@@ -91,11 +91,11 @@
       color: #b30000;
     }
 
-    footer {
-      margin-top: auto;
-      font-size: 0.8rem;
-      color: #555;
-      user-select: none;
+    .message {
+      margin-top: 1em;
+      font-weight: bold;
+      color: #b30000;
+      min-height: 1.5em;
     }
   </style>
 </head>
@@ -122,12 +122,39 @@
     </p>
 
     <div class="input-container">
-      <input type="text" placeholder="Enter Protocol Key" aria-label="Enter Protocol Key" />
+      <input
+        type="text"
+        id="protocolKey"
+        placeholder="Enter Protocol Key"
+        aria-label="Enter Protocol Key"
+        autocomplete="off"
+        autocapitalize="characters"
+      />
+      <div class="message" id="message"></div>
     </div>
   </main>
 
   <footer>
     &copy; The Umbra Protocol &mdash; Confidential
   </footer>
+
+  <script>
+    const input = document.getElementById('protocolKey');
+    const message = document.getElementById('message');
+    const correctKey = 'SHADOW42';
+
+    input.addEventListener('keyup', () => {
+      const entered = input.value.toUpperCase().trim();
+      if (entered === correctKey) {
+        message.textContent = 'Access Granted. Proceed to the next phase: https://your-next-clue.link';
+        message.style.color = '#00ff00';
+      } else if (entered.length >= correctKey.length) {
+        message.textContent = 'Access Denied. Try again.';
+        message.style.color = '#b30000';
+      } else {
+        message.textContent = '';
+      }
+    });
+  </script>
 </body>
 </html>
